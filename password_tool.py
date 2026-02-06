@@ -50,8 +50,40 @@ def check_password_strength(password):
     
     Hint: Use .isdigit(), .isupper(), .islower() and string.punctuation
     """
-    # TODO: Implement this function
-    pass
+
+    score = 0
+    strength = 0
+    feedback = "Test"
+
+    # check length
+    
+    length = len(password)
+    if length >= 12:
+        score += 30
+    elif length >= 8:
+        score += 20
+    
+    hasDigit = 0
+    hasLower = 0
+    hasUpper = 0
+    hasSpecial = 0
+
+    for i in password:
+        if i.isdigit():
+            hasDigit = 20
+        if i.isupper():
+            hasUpper = 20
+        if i.islower():
+            hasLower = 20
+        if i in ['!','@','#','$','%']:
+            hasSpecial = 20
+
+    score += hasDigit + hasUpper + hasLower + hasSpecial
+    
+    strength = 'good'
+
+
+    return {"password": password, "score": score, "strength": strength, "feedback": feedback}
 
 
 # ============================================
