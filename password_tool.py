@@ -52,8 +52,7 @@ def check_password_strength(password):
     """
 
     score = 0
-    strength = 0
-    feedback = "Test"
+    feedback = []
 
     # check length
     
@@ -62,6 +61,8 @@ def check_password_strength(password):
         score += 30
     elif length >= 8:
         score += 20
+    else:
+        feedback.append("Use at least 8 characters")
     
     hasDigit = 0
     hasLower = 0
@@ -79,9 +80,32 @@ def check_password_strength(password):
             hasSpecial = 20
 
     score += hasDigit + hasUpper + hasLower + hasSpecial
-    
-    strength = 'good'
 
+    if hasDigit == 0:
+        feedback.append("Add a number")
+    if hasUpper == 0:
+        feedback.append("Add an uppercase letter")
+    if hasLower == 0:
+        feedback.append("Add a lowercase letter")
+    if hasSpecial == 0:
+        feedback.append("Add a special character (!@#$%)")
+
+    # check common passwords
+    if password.lower() not in COMMON_PASSWORDS:
+        score += 10
+    else:
+        feedback.append("This is a commonly used password")
+
+    # determine strength level
+    if score >= 70:
+        strength = "Strong"
+    elif score >= 40:
+        strength = "Medium"
+    else:
+        strength = "Weak"
+
+    if len(feedback) == 0:
+        feedback.append("Password looks good!")
 
     return {"password": password, "score": score, "strength": strength, "feedback": feedback}
 
@@ -114,8 +138,37 @@ def generate_password(length=12, use_special=True):
     Hint: Use string.ascii_uppercase, string.ascii_lowercase, 
           string.digits, and random.choice()
     """
-    # TODO: Implement this function
-    pass
+
+    # enforce minimum length
+    if length < 8:
+        length = 8
+
+    # build the character pool
+    charPool = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    if use_special:
+        charPool += "!@#$%"
+
+    # guarantee at least one of each required type
+    password = []
+    password.append(random.choice(string.ascii_uppercase))
+    password.append(random.choice(string.ascii_lowercase))
+    password.append(random.choice(string.digits))
+    if use_special:
+        password.append(random.choice("!@#$%"))
+
+    # fill the rest with random chars from the pool
+    remaining = length - len(password)
+    for i in range(remaining):
+        password.append(random.choice(charPool))
+
+    # shuffl
+    random.shuffle(password)
+
+    result = ""
+    for i in password:
+        result += i
+
+    return result
 
 
 # ============================================
